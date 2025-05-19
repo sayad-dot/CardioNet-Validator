@@ -172,3 +172,21 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignore virtual environment
+venv/
+
+# Ignore datasets
+data/*.csv
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore outputs
+outputs/
+
+# Ignore system/IDE files
+__pycache__/
+*.pyc
+.DS_Store
+*.swp
