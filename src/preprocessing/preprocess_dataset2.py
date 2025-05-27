@@ -1,8 +1,9 @@
-# src/preprocessing/preprocess_dataset2.py
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.preprocessing.preprocess_utils import *
-
+from preprocessing.preprocess_utils import *
 
 def preprocess_dataset2():
     df = load_dataset('data/dataset2.csv')
@@ -14,7 +15,7 @@ def preprocess_dataset2():
     df = encode_categorical(df)
     df = normalize_numerical(df)
 
-    save_dataset(df, 'data/clean_dataset2.csv')
+    save_dataset(df, 'data/processed/clean_dataset2.csv')
     print("Dataset 2 cleaned and saved.")
 
 if __name__ == '__main__':

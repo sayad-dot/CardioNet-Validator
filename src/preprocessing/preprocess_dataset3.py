@@ -1,20 +1,24 @@
-import pandas as pd
+# src/preprocessing/preprocess_dataset3.py
+
+import sys
 import os
-from src.preprocessing.preprocess_utils import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # Enables src import
 
-# File paths
-raw_path = "data/dataset3.csv"
-processed_path = "data/processed/dataset3_cleaned.csv"
+from preprocessing.preprocess_utils import *
 
-# Load raw data
-df = pd.read_csv(raw_path)
-print("Original shape:", df.shape)
+def preprocess_dataset3():
+    df = load_dataset('data/dataset3.csv')
+    print("Original shape:", df.shape)
 
-# Drop rows with missing values
-df.dropna(inplace=True)
-print("After missing value removal:", df.shape)
+    df = handle_missing_values(df)
+    print("After missing value removal:", df.shape)
 
-# Save cleaned data
-os.makedirs("data/processed", exist_ok=True)
-df.to_csv(processed_path, index=False)
-print("Dataset 3 cleaned and saved.")
+    df = encode_categorical(df)
+    df = normalize_numerical(df)
+
+    save_dataset(df, 'data/processed/clean_dataset3.csv')
+    print("Dataset 3 cleaned and saved.")
+
+if __name__ == '__main__':
+    preprocess_dataset3()
+

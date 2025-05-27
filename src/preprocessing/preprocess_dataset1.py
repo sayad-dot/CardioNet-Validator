@@ -6,6 +6,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
 
 from preprocessing.preprocess_utils import *
 
+
+
 def preprocess_dataset1():
     df = load_dataset('data/dataset1.csv')
     print("Original shape:", df.shape)
@@ -15,8 +17,9 @@ def preprocess_dataset1():
 
     df = encode_categorical(df)
     df = normalize_numerical(df)
+    print("Final columns:", df.columns)
 
-    save_dataset(df, 'data/clean_dataset1.csv')
+    save_dataset(df, 'data/processed/clean_dataset1.csv')
     print("Dataset 1 cleaned and saved.")
 
 if __name__ == '__main__':
