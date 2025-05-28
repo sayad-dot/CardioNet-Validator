@@ -1,14 +1,23 @@
 # src/preprocessing/preprocess_utils.py
-
+from preprocessing.column_mapping import UNIFIED_COLUMNS
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 def load_dataset(path):
     return pd.read_csv(path)
 
+
+
+
 def handle_missing_values(df):
-    # Drop rows with missing values (or you can use df.fillna if appropriate)
-    return df.dropna()
+    # First strip all column names
+    df.columns = df.columns.str.strip()
+    
+    # Now rename using unified columns
+    df = df.rename(columns=lambda col: UNIFIED_COLUMNS.get(col, col))
+    
+    df = df.dropna()
+    return df
 
 def encode_categorical(df):
     le = LabelEncoder()
