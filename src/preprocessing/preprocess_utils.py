@@ -1,5 +1,6 @@
 # src/preprocessing/preprocess_utils.py
-from preprocessing.column_mapping import UNIFIED_COLUMNS
+from src.preprocessing.column_mapping import UNIFIED_COLUMNS
+
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
