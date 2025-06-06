@@ -14,30 +14,40 @@ def load_processed_dataset(path: str):
     Load the processed dataset2 CSV (already 0/1 target).
     """
     df = pd.read_csv(path)
-    # Assume target is already named “heart disease” or “target” in your processed CSV.
-    # If it’s “target”, rename:
+
+    # If your CSV column is named "target" instead of "heart disease", rename it:
     if "target" in df.columns and "heart disease" not in df.columns:
         df = df.rename(columns={"target": "heart disease"})
+
     X = df.drop(columns=["heart disease"])
     y = df["heart disease"]
     return X, y
 
 def main():
+    # ─── Locate project root and processed folder ───
     PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     PROCESSED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
-    processed_path = os.path.join(PROCESSED_DATA_DIR, "clean_dataset_2.csv") 
+
+    # ─── Correct filename: clean_dataset2.csv (no extra underscore) ───
+    processed_path = os.path.join(PROCESSED_DATA_DIR, "clean_dataset2.csv")
+
+    # ─── Output folders ───
     output_dir = os.path.join(os.path.dirname(__file__), os.pardir, "outputs", "hyperparameter_tuning", "models_dataset2")
     os.makedirs(output_dir, exist_ok=True)
+
     results_dir = os.path.join(os.path.dirname(__file__), os.pardir, "outputs", "hyperparameter_tuning")
     os.makedirs(results_dir, exist_ok=True)
 
+    # ─── Load data ───
     X, y = load_processed_dataset(processed_path)
 
+    # ─── Stratified train/test split ───
     splitter = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
     for train_idx, test_idx in splitter.split(X, y):
         X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
         y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
+    # ─── Define models + parameter grids ───
     estimators = {
         "logistic": (
             LogisticRegression(solver="liblinear", random_state=42),
@@ -67,6 +77,7 @@ def main():
     summary_rows = []
     for name, (model, param_grid) in estimators.items():
         print(f"\n=== HYPERPARAM TUNING: {name.upper()} (Dataset 2) ===")
+
         grid = GridSearchCV(
             estimator=model,
             param_grid=param_grid,
@@ -80,20 +91,24 @@ def main():
         print(f"Best params for {name}: {grid.best_params_}")
         best_model = grid.best_estimator_
 
+        # ─── Evaluate on test set ───
         y_pred = best_model.predict(X_test)
         print(f"\n--- Classification report ({name}) on TEST set ---")
         print(classification_report(y_test, y_pred))
         print("Confusion Matrix:")
         print(confusion_matrix(y_test, y_pred))
 
+        # ─── Save best model ───
         model_filename = os.path.join(output_dir, f"{name}_best.pkl")
         joblib.dump(best_model, model_filename)
         print(f"Saved best {name} to {model_filename}")
 
+        # ─── Collect CV results ───
         results_df = pd.DataFrame(grid.cv_results_)
         results_df["model"] = name
         summary_rows.append(results_df)
 
+    # ─── Write all CV results to CSV ───
     all_results = pd.concat(summary_rows, ignore_index=True)
     results_csv_path = os.path.join(results_dir, "search_results_dataset2.csv")
     all_results.to_csv(results_csv_path, index=False)
