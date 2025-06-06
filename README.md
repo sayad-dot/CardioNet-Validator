@@ -1,72 +1,95 @@
-# CardioNet-Validator 🫀
+CardioNet-Validator 
 
-A medical machine learning project focused on heart disease detection using clinical parameters. This project performs exploratory data analysis (EDA), data cleaning, and statistical insights from the Heart Disease UCI dataset to understand patient risk profiles. The goal is to build a foundation for future model development that can help predict heart disease using machine learning techniques.
+A robust, end-to-end machine learning pipeline for predicting heart disease from clinical parameters, built with Python and XGBoost. It performs data collection, preprocessing, model training, rigorous cross-dataset validation, and final model integration for inference.
 
----
+Project Structure
 
-## 📂 Dataset Information
+CardioNet-Validator/
+├── data/
+│   ├── dataset1.csv           # Original Kaggle dataset 1
+│   ├── dataset2.csv           # Original Kaggle dataset 2
+│   ├── dataset3.csv           # Original Kaggle dataset 3
+│   └── processed/
+│       ├── clean_dataset1.csv
+│       ├── clean_dataset2.csv
+│       └── clean_dataset3.csv
+├── src/
+│   ├── preprocessing/         # Data cleaning & feature engineering
+│   ├── models/                # Model utils and per-dataset training scripts
+│   ├── validation/            # Cross-dataset validation code
+│   └── pipeline/              # Final training & prediction scripts
+├── outputs/
+│   ├── models_datasetX/       # Serialized models per dataset
+│   ├── cross_dataset_validation_summary.csv
+│   └── final_model/
+│       └── xgb_dataset3.pkl   # Final XGBoost model
+└── reports/
+    ├── metrics/               # CSVs of evaluation results
+    └── figures/               # Confusion matrices & ROC curves
 
-- **Source**: UCI Heart Disease Dataset
-- **Shape**: `(303, 14)`
-- **Features**:
-  - `age`: Age of the patient
-  - `sex`: Sex (1 = male; 0 = female)
-  - `cp`: Chest pain type (0-3)
-  - `trestbps`: Resting blood pressure
-  - `chol`: Serum cholesterol (mg/dl)
-  - `fbs`: Fasting blood sugar > 120 mg/dl (1 = true; 0 = false)
-  - `restecg`: Resting electrocardiographic results (0-2)
-  - `thalach`: Maximum heart rate achieved
-  - `exang`: Exercise induced angina (1 = yes; 0 = no)
-  - `oldpeak`: ST depression induced by exercise
-  - `slope`: Slope of the peak exercise ST segment
-  - `ca`: Number of major vessels (0-3) colored by fluoroscopy
-  - `thal`: Thalassemia (1 = normal; 2 = fixed defect; 3 = reversible defect)
-  - `target`: Heart disease (1 = disease present, 0 = not present)
+Quick Start
 
----
+1.Clone & install
 
-## 📊 Exploratory Data Analysis
+git clone https://github.com/yourusername/CardioNet-Validator.git
+cd CardioNet-Validator
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 
-- Verified no missing values in the dataset ✅
-- Summary statistics computed for each column
-- Class balance checked for the `target` variable
-- Categorical features like `sex`, `cp`, `thal`, `restecg`, `slope`, etc. were analyzed for distribution
-- Visualizations (e.g., count plots, histograms, correlation heatmaps) will be included in future commits
+2.Preprocess datasets 1–3 (already committed):
 
----
+python -m src.preprocessing.preprocess_dataset1
+python -m src.preprocessing.preprocess_dataset2
+python -m src.preprocessing.preprocess_dataset3
 
-## 🧪 Project Goals
 
-- ✅ Data loading and verification
-- ✅ Exploratory data analysis
-- ✅ Statistical summary and feature understanding
-- 🕗 Feature engineering and encoding (upcoming)
-- 🕗 Model training using machine learning (upcoming)
-- 🕗 Hyperparameter tuning and evaluation (upcoming)
-- 🕗 Deployment of predictive model (optional future scope)
+3.Cross-Dataset Validation (Phase 5–6):
 
----
+python -m src.validation.cross_dataset_validation
 
-## 🛠 Tech Stack
+(Produces outputs/cross_dataset_validation_summary.csv with accuracy, F1, ROC-AUC for all train→test combos.)
 
-- Python 3.12
-- Pandas
-- Matplotlib / Seaborn (for visualizations)
-- Jupyter Notebook / IPython
-- (Upcoming) Scikit-learn, XGBoost, etc.
+4.Train Final Model (XGBoost on Dataset 3):
 
----
+python -m src.pipeline.train_final_model
 
-## 🚀 How to Run
+(Saves model to outputs/final_model/xgb_dataset3.pkl)
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/CardioNet-Validator.git
-   cd CardioNet-Validator
+5.Predict on new data:
 
-2. Create a virtual environment.
+python -m src.pipeline.predict_final_model data/processed/clean_dataset3.csv
+(Prints input plus predicted_label and predicted_proba)
 
-3. Install dependencies.
+Key Results
 
-4. Run the analysis.
+Best generalizing model: XGBoost trained on Dataset 3
+
+Test on Dataset 1 → F1: 0.85, AUC: 0.92
+
+Test on Dataset 2 → F1: 0.74, AUC: 0.89
+
+Cross-dataset evaluation demonstrates robust generalization across different data sources.
+
+
+Tech Stack
+
+Python 3.12
+
+pandas, numpy
+
+scikit-learn, XGBoost, joblib
+
+matplotlib, seaborn (for plots in reports/)
+
+
+Next Steps
+
+1.Hyperparameter tuning (GridSearchCV / RandomizedSearchCV) to boost performance.
+
+2.Visualization of ROC curves, confusion matrices, and feature importances.
+
+3.Deployment wrapping: package as a CLI, Python package, or REST API.
+
+4.Comprehensive documentation: finalize this README and add a detailed project report.
+
+© 2025 CardioNet-Validator Project. Logged by Sayad Ibne Azad.
